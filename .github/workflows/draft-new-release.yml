@@ -11,7 +11,7 @@ jobs:
     # Only run for issues with a specific title and label. Not strictly required but makes finding the release issue again later easier.
     # There is also a whitelist that you may want to use to restrict, who can trigger this workflow.
     # Unfortunately, we cannot create an array on the fly, so the whitelist is just comma-separated.
-    if: startsWith(github.event.issue.title, 'Release version') && contains(github.event.issue.labels.*.name, 'release') && contains(github.event.issue.user.login, 'imsteev')
+    if: startsWith(github.event.issue.title, 'Release version') && contains(github.event.issue.labels.*.name, 'release') && contains('imsteev', github.event.issue.user.login)
     steps:
       - uses: actions/checkout@v2
 
@@ -19,7 +19,6 @@ jobs:
         run: |
           TITLE="${{ github.event.issue.title }}"
           VERSION=${TITLE#Release version }
-
           echo "::set-env name=RELEASE_VERSION::$VERSION"
 
       # In order to make a commit, we need to initialize a user.
@@ -44,9 +43,7 @@ jobs:
         with:
           source_branch: release-${{ env.RELEASE_VERSION }}
           destination_branch: "master" # If blank, default: master
-          pr_title: "release-${{ env.RELEASE_VERSION }}" # Title of pull request
           pr_body: ":crown: *An automated PR*" # Full markdown support, requires pr_title to be set
-          pr_template: ".github/PULL_REQUEST_TEMPLATE.md" # Path to pull request template, requires pr_title to be set, excludes pr_body
           pr_label: "gitflow" # Comma-separated list (no spaces)
           pr_allow_empty: true # Creates pull request even if there are no changes
           github_token: ${{ secrets.GITHUB_TOKEN }}
