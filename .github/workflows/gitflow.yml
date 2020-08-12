@@ -1,0 +1,14 @@
+name: Gitflow
+on:
+  # To create pull requests.
+  - push
+
+jobs:
+  build:
+    name: Gitflow
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: Logerfo/gitflow-action@0.0.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # The `GITHUB_TOKEN` secret.
+          auto-merge: false # If `true`, will try to automatically merge the pull requests.
