@@ -4,9 +4,6 @@ on:
   issues:
     types: [labeled]
 
-env:
-  TEAM: "imsteev"
-
 jobs:
   draft-new-release:
     name: "Draft a new release"
@@ -14,6 +11,7 @@ jobs:
     # Only run for issues with a specific title and label. Not strictly required but makes finding the release issue again later easier.
     # There is also a whitelist that you may want to use to restrict, who can trigger this workflow.
     # Unfortunately, we cannot create an array on the fly, so the whitelist is just comma-separated.
+    if: startsWith(github.event.issue.title, 'Release version') && contains(github.event.issue.labels.*.name, 'release') && contains('imsteev', github.event.issue.user.login)
     steps:
       - uses: actions/checkout@v2
 
@@ -21,32 +19,28 @@ jobs:
         run: |
           TITLE="${{ github.event.issue.title }}"
           VERSION=${TITLE#Release version }
-          TEAM="imsteev,"
 
           echo "::set-env name=RELEASE_VERSION::$VERSION"
-          echo "::set-env name=TEAM::$TEAM"
 
-      if: startsWith(github.event.issue.title, 'Release version') && contains(github.event.issue.labels.*.name, 'release') && contains(${{ env.TEAM }}, github.event.issue.user.login)
-      steps:
-        # In order to make a commit, we need to initialize a user.
-        # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
-        - name: Initialize mandatory git config
-          run: |
-            git config pull.rebase false
-            git config user.name "GitHub actions"
-            git config user.email noreply@github.com
+      # In order to make a commit, we need to initialize a user.
+      # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
+      - name: Initialize mandatory git config
+        run: |
+          git config pull.rebase false
+          git config user.name "GitHub actions"
+          git config user.email noreply@github.com
 
-        - name: Pull
-          run: git pull origin dev
+      - name: Pull
+        run: git pull origin dev
 
-        - name: Create release branch from dev
-          run: git checkout -b release-${{ env.RELEASE_VERSION }}
+      - name: Create release branch from dev
+        run: git checkout -b release-${{ env.RELEASE_VERSION }}
 
-        - name: Push release branch upstream
-          run: git push origin release-${{ env.RELEASE_VERSION }}
+      - name: Push release branch upstream
+        run: git push origin release-${{ env.RELEASE_VERSION }}
 
-        - name: Create release -> master
-          uses: repo-sync/pull-request@v2
-          with:
-            source_branch: release-${{ env.RELEASE_VERSION }}
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create release -> master
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: release-${{ env.RELEASE_VERSION }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
