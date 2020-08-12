@@ -11,7 +11,7 @@ jobs:
     # Only run for issues with a specific title and label. Not strictly required but makes finding the release issue again later easier.
     # There is also a whitelist that you may want to use to restrict, who can trigger this workflow.
     # Unfortunately, we cannot create an array on the fly, so the whitelist is just comma-separated.
-    if: startsWith(github.event.issue.title, 'Release version') && contains(github.event.issue.labels.*.name, 'release') && contains('imsteev', github.event.issue.user.login)
+    if: startsWith(github.event.issue.title, 'Release version') && contains(github.event.issue.labels.*.name, 'release') && contains(github.event.issue.user.login, 'imsteev')
     steps:
       - uses: actions/checkout@v2
 
