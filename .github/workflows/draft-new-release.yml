@@ -65,9 +65,4 @@ jobs:
           # We are claiming things here based on the `publish-new-release.yml` workflow.
           # You should obviously adopt it to say the truth depending on your release workflow :)
           body: |
-            Hi @${{ github.event.issue.user.login }}!
-
-            This PR was created in response to this release issue: #${{ github.event.issue.number }}.
-            I've updated the changelog and bumped the versions in the manifest files in this commit: ${{ steps.make-commit.outputs.commit }}.
-
-            Merging this PR will create a GitHub release and upload any assets that are created as part of the release build.
+            Created by #${{ github.event.issue.number }}
