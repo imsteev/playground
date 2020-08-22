@@ -47,6 +47,6 @@ jobs:
           # We are claiming things here based on the `publish-new-release.yml` workflow.
           # You should obviously adopt it to say the truth depending on your release workflow :)
           body: |
-            Closes #${{ github.event.issue.number }}
+            Fixes #${{ github.event.issue.number }}
 
             ##### _Created by @${{ github.event.issue.user.login }}_
