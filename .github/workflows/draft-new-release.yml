@@ -23,12 +23,7 @@ jobs:
           echo "::set-env name=RELEASE_VERSION::$VERSION"
 
       - name: Create release branch
-        run: git checkout -b release/${{ env.RELEASE_VERSION }}
-
-      - name: Update changelog
-        uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
-        with:
-          version: ${{ env.RELEASE_VERSION }}
+        run: git checkout -b release
 
       # In order to make a commit, we need to initialize a user.
       # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
@@ -37,27 +32,14 @@ jobs:
           git config user.name "GitHub actions"
           git config user.email noreply@github.com
 
-      # This step will differ depending on your project setup
-      # Fortunately, yarn has a built-in command for doing this!
-      - name: Bump version in package.json
-        run: yarn version --new-version ${{ env.RELEASE_VERSION }} --no-git-tag-version
-
-      - name: Commit changelog and manifest files
-        id: make-commit
-        run: |
-          git add CHANGELOG.md package.json
-          git commit --message "Prepare release ${{ env.RELEASE_VERSION }}"
-
-          echo "::set-output name=commit::$(git rev-parse HEAD)"
-
       - name: Push new branch
-        run: git push origin release/${{ env.RELEASE_VERSION }}
+        run: git push origin release
 
       - name: Create pull request
         uses: thomaseizinger/create-pull-request@1.0.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          head: release/${{ env.RELEASE_VERSION }}
+          head: release
           base: master
           title: ${{ github.event.issue.title }}
           reviewers: ${{ github.event.issue.user.login }} # By default, we request a review from the person who opened the issue. You can replace this with a static list of users.
@@ -65,4 +47,5 @@ jobs:
           # We are claiming things here based on the `publish-new-release.yml` workflow.
           # You should obviously adopt it to say the truth depending on your release workflow :)
           body: |
-            Created by #${{ github.event.issue.number }}
+            ##### _Created by @${{ github.event.issue.user.login }}
+            #### Closes #${{ github.event.issue.number }}
