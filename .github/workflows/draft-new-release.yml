@@ -23,6 +23,7 @@ jobs:
 
       - name: Create release branch
         run: |
+          git pull origin dev
           git checkout -b release
           git config user.name "GitHub actions"
           git config user.email noreply@github.com
