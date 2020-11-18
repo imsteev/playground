@@ -13,3 +13,5 @@ jobs:
       - name: create file if not exist
         if: steps.repo-stats-cache.output.cache-hit != 'true'
         run: echo "{}" > repo-stats.json
+      - name: display stats
+        run: cat repo-stats.json
