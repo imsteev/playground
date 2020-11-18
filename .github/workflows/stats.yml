@@ -15,5 +15,4 @@ jobs:
         run: echo "{}" > repo-stats.json
       - name: display stats
         run: |
-          cat repo-stats.json
-          sudo apt-get install jq
+          cat repo-stats.json | jq .
