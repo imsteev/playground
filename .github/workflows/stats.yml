@@ -1,0 +1,15 @@
+name: Repo stats
+on: push
+jobs:
+  get-current-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache stats file
+        uses: actions/cache@v2
+        id: repo-stats-cache
+        with:
+          path: repo-stats.json
+          key: ${{ runner.os }}-playground-repo-stats-file
+      - name: create file if not exist
+        if: steps.repo-stats-cache.output.cache-hit != 'true'
+        run: echo "{}" > repo-stats.json
