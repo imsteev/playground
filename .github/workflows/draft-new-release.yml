@@ -29,7 +29,7 @@ jobs:
       - uses: peter-evans/create-pull-request@v3
         with:
           base: master
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACTIONS_TOKEN }}
           commit-message: Automated release PR 
           team-reviewers: team
           title: ${{ github.event.issue.title }}
