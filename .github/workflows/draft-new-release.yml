@@ -24,7 +24,9 @@ jobs:
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Create release branch
-        run: git checkout -b release
+        run: |
+          git checkout -b release
+          git push origin release -f
 
       - uses: peter-evans/create-pull-request@v3
         with:
