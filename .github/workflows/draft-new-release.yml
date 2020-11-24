@@ -13,28 +13,26 @@ jobs:
     # Unfortunately, we cannot create an array on the fly, so the whitelist is just comma-separated.
     if: github.event.issue.state == 'open' && startsWith(github.event.issue.title, 'Release') && contains(github.event.issue.labels.*.name, 'release') && contains('imsteev', github.event.issue.user.login)
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: dev
-
       - name: Extract version from issue title
         run: |
           TITLE="${{ github.event.issue.title }}"
           VERSION=${TITLE#Release version }
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Create release branch
+      - name: Checkout production branch
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Point working production branch to dev
         run: |
-          git checkout -b release
-          git push origin release -f
+          git fetch origin dev:dev
+          git reset --hard dev
 
       - uses: peter-evans/create-pull-request@v3
         with:
-          branch: release
-          base: master
+          branch: release-branch
           token: ${{ secrets.ACTIONS_TOKEN }}
-          commit-message: Automated release PR 
-          team-reviewers: team
           title: ${{ github.event.issue.title }}
           body: |
             Fixes #${{ github.event.issue.number }}
